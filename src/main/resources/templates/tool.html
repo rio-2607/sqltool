@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:overflow="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{~/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{~/css/bootstrap-theme.min.css}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>SQLTool</title>
+</head>
+
+<body role="document">
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand active" href="#">SQL查询工具</a>
+        </div>
+    </div>
+</div>
+
+<div class="container theme-showcase" style="margin-top: 80px;" role="main">
+    <div class="panel-body">
+        <div class="bs-example">
+            <div class="tab-content">
+                <div id="one" class="tab-pane fade in active">
+                    <br>
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <textarea class="form-control" id="inputsql" rows="3" cols="20"/>
+                            </td>
+                            <td>
+                                <button type="search"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="doExecutionSQL(this)">
+                                    查询
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12" id="result" overflow: scroll;>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{~/js/jquery-2.1.1.min.js}" type="text/javascript"></script>
+<script th:src="@{~/js/jquery.loadTemplate-1.4.5.min.js}" type="text/javascript"></script>
+<script th:src="@{~/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{~/js/jquery.bootstrap.min.js}" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    function doExecutionSQL(item) {
+        $(function() {
+            var sql = $('[id|="inputsql"]').val();
+            var requestUrl = "/tool/sql?sql=" + sql;
+            $.getJSON(requestUrl, function (json) {
+                var headers = json['header'];
+                console.log("headers = ",headers);
+                var content = json['results'];
+                console.log("content = ",content);
+
+                $("#restable").remove(); // 删除原始节点
+
+                var table = $('<table id="restable" ></table>').addClass("table table-striped table-bordered table-hover");
+                var tr = $('<tr></tr>'); //creates row
+                var th = $('<th></th>');//creates table header cells
+                var td = $('<td></td>'); //creates table cells
+                var header = tr.clone(); //creates header row
+
+                //fills header row
+                headers.forEach(function(d) {
+                    header.append(th.clone().text(d))
+                });
+
+                //attaches header row
+                table.append($('<thead></thead>').append(header));
+
+                //creates
+                var tbody = $('<tbody></tbody>');
+
+                //fills out the table body
+                content.forEach(function (d) {
+                    var row = tr.clone();//creates a row
+                    d.forEach(function (e,j) {
+                        row.append(td.clone().text(e)) //fills in the row
+                    })
+                    tbody.append(row) //puts row on the tbody
+                })
+                table.append(tbody).appendTo("#result")
+            });
+        });
+    }
+
+</script>
+
+</body>
+</html>
