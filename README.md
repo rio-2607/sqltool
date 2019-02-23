@@ -1,5 +1,5 @@
 
-## 基于springboot+mybatis的sql数据查询后台。
+## 基于springboot+mybatis的sql数据查询后台
 
 ### 背景
 公司没有专门的类似于iDB的sql查询后台，每次需要查询数据都需要登录线上机器，通过sql命令直接连线上数据库查询。使用不便，效率低下。
